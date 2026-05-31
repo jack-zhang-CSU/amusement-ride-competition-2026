@@ -22,9 +22,9 @@ body{background:#0a0f18;overflow:hidden;font-family:Arial,sans-serif}
 #timeline button.active{background:#d29922;color:#0d1117;border-color:#d29922;font-weight:bold}
 .seg{display:inline-block;height:12px;border-radius:2px;position:absolute;top:-3px}
 /* PiP cockpit views — transparent overlays; video from scissor render on main canvas */
-.pip{position:fixed;bottom:120px;width:260px;height:200px;border:2px solid #30363d;border-radius:8px;z-index:5;pointer-events:none}
-#pipInner{left:16px}
-#pipOuter{right:16px}
+.pip{position:fixed;width:260px;height:200px;border:2px solid #30363d;border-radius:8px;z-index:5;pointer-events:none;right:16px}
+#pipInner{bottom:340px}
+#pipOuter{bottom:120px}
 .pip .label{position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:10px;color:#e6edf3;background:#161b22c0;padding:1px 8px;border-radius:3px}
 /* Joystick overlay on PiP */
 .js{position:absolute;width:56px;height:56px;border-radius:50%;background:#ffffff10;border:2px solid #ffffff30;bottom:8px;cursor:grab;z-index:6;touch-action:none;pointer-events:auto}
@@ -785,15 +785,14 @@ function animate(ts){
 
   // PiP views
   renderer.setScissorTest(true);
-  const pipY = 120; // PiP bottom y in WebGL coords (above timeline)
-  [{cam: pipCamI, x: 16, id: 'pipInner'},
-   {cam: pipCamO, x: innerWidth - pipSize.w - 16, id: 'pipOuter'}]
-  .forEach(({cam, x, id}) => {
-    renderer.setViewport(x, pipY, pipSize.w, pipSize.h);
-    renderer.setScissor(x, pipY, pipSize.w, pipSize.h);
+  [{cam: pipCamI, x: innerWidth - pipSize.w - 16, id: 'pipInner', bottom: 340},
+   {cam: pipCamO, x: innerWidth - pipSize.w - 16, id: 'pipOuter', bottom: 120}]
+  .forEach(({cam, x, id, bottom}) => {
+    renderer.setViewport(x, bottom, pipSize.w, pipSize.h);
+    renderer.setScissor(x, bottom, pipSize.w, pipSize.h);
     renderer.render(scene, cam);
     const el = document.getElementById(id);
-    if (el) { el.style.left = x + 'px'; el.style.bottom = pipY + 'px'; }
+    if (el) { el.style.left = x + 'px'; el.style.bottom = bottom + 'px'; }
   });
   renderer.setScissorTest(false);
 }
